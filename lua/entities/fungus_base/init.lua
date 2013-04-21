@@ -16,12 +16,13 @@ function ENT:Initialize()
 	self.next_spawn_time =  (CurTime() + math.random(GetConVar("fungus_min_breeding_delay"):GetFloat(), GetConVar("fungus_max_breeding_delay"):GetFloat()))
 	
 	-- Physical Stuff
-	self.Entity:SetModel(self.model)
-	self.Entity:PhysicsInitSphere(3)
-	self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
-	self.Entity:SetSolid(SOLID_VPHYSICS)
-	self.Entity:SetRenderMode(RENDERMODE_TRANSALPHA)
-	self.Entity:SetColor( Color(0,0,0,55) )
+	self:SetModel(self.model)
+	self:PhysicsInitSphere(3)
+	self:SetMoveType(MOVETYPE_VPHYSICS)
+	self:SetSolid(SOLID_VPHYSICS)
+	self:SetRenderMode(RENDERMODE_TRANSCOLOR)
+	self.RenderGroup = RENDERGROUP_BOTH
+	self:SetColor( Color(0,0,0,55) )
 	
 	-- Update global population value
 	fungus_currentpop = fungus_currentpop + 1

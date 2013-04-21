@@ -20,12 +20,13 @@ function ENT:Initialize()
 	self.next_spawn_time =  (CurTime() + math.random(GetConVar("fungus_min_breeding_delay"):GetFloat(), GetConVar("fungus_max_breeding_delay"):GetFloat()))
 	
 	-- Physical Stuff
-	self.Entity:SetModel(self.model)
-	self.Entity:PhysicsInitSphere(3,"super_bouncy")
-	self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
-	self.Entity:SetSolid(SOLID_VPHYSICS)
-	self.Entity:SetRenderMode(RENDERMODE_TRANSALPHA)
-	self.Entity:SetColor( Color(255,127,0,255) )
+	self:SetModel(self.model)
+	self:PhysicsInitSphere(3,"super_bouncy")
+	self:SetMoveType(MOVETYPE_VPHYSICS)
+	self:SetSolid(SOLID_VPHYSICS)
+	self:SetRenderMode(RENDERMODE_TRANSCOLOR)
+	self.RenderGroup = RENDERGROUP_TRANSLUCENT
+	self:SetColor( Color(255,127,0,255) )
 	
 
 	

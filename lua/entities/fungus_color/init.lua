@@ -130,7 +130,7 @@ function ENT:FungusBreed()
 	if(breed_success == true) then
 		
 		-- Pick the next spawn time.
-		self.next_spawn_time = (CurTime() + math.random(fungus_minimum_spawn_time, fungus_maximum_spawn_time))
+		self.next_spawn_time = (CurTime() + math.random(GetConVar("fungus_min_breeding_delay"):GetFloat(), GetConVar("fungus_max_breeding_delay"):GetFloat()))
 	
 	else
 	

@@ -25,7 +25,8 @@ function ENT:Initialize()
 	self.Entity:PhysicsInitSphere(3)
 	self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
 	self.Entity:SetSolid(SOLID_VPHYSICS)
-	self.Entity:SetRenderMode(RENDERMODE_TRANSALPHA)
+	self:SetRenderMode(RENDERMODE_TRANSCOLOR)
+	self.RenderGroup = RENDERGROUP_TRANSLUCENT
 	self.Entity:SetColor( Color(0,127,0,255) )
 	
 	-- Floating fungus flies around.
