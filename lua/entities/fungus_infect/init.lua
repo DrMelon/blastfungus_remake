@@ -22,6 +22,9 @@ end
 
 function ENT:FungusAction(trigger)
 	-- Infectious Fungus does not explode - rather, it plants spores inside the object which caused it harm.
+	
+	-- NOTE: Disabling this fungus for now. Ideally, we'd want to make an invisible entity which tracks the thing that touched it.
+	
 	if(self.has_exploded == false) then
 		self.has_exploded = true
 		-- Where are we?
@@ -59,7 +62,7 @@ end
 	
 function ENT:Think()
 	-- Infection Fungi do not Die or Breed naturally.
-	self.Entity:NextThink(CurTime() + 2.5 + math.random(2,8))
+	self.Entity:NextThink(CurTime() + GetConVar("fungus_think_rate"):GetFloat())
 	
 	return true
 	

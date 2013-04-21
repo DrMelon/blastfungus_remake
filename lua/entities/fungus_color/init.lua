@@ -25,7 +25,7 @@ function ENT:FungusBreed()
 	trace = {}
 	trace.start = trace_pos
 	-- Make the traces short
-	trace.endpos = Vector((trace_pos.x + math.random(-400,400)), (trace_pos.y + math.random(-400,400)), (trace_pos.z + math.random(-400,400)))
+	trace.endpos = Vector((trace_pos.x + math.random(-GetConVar("fungus_max_distance"):GetFloat(),GetConVar("fungus_max_distance"):GetFloat())), (trace_pos.y + math.random(-GetConVar("fungus_max_distance"):GetFloat(),GetConVar("fungus_max_distance"):GetFloat())), (trace_pos.z + math.random(-GetConVar("fungus_max_distance"):GetFloat(),GetConVar("fungus_max_distance"):GetFloat())))
 	
 	-- Perform the trace
 	tr = util.TraceLine(trace)
@@ -43,7 +43,7 @@ function ENT:FungusBreed()
 		end
 		
 		-- If the trace hit close by...
-		if(self.Entity:GetPos():Distance(tr.HitPos) > 50) and (self.Entity:GetPos():Distance(tr.HitPos) < 400) then
+		if(self.Entity:GetPos():Distance(tr.HitPos) > GetConVar("fungus_min_distance"):GetFloat()) and (self.Entity:GetPos():Distance(tr.HitPos) < GetConVar("fungus_max_distance"):GetFloat()) then
 			
 			-- Make a baby!
 			
@@ -135,7 +135,7 @@ function ENT:FungusBreed()
 	else
 	
 		-- Try again!
-		self.Entity:NextThink(CurTime() + 0.5)
+		self.Entity:NextThink(CurTime() + GetConVar("fungus_think_rate"):GetFloat())
 	end
 	
 	

@@ -6,6 +6,8 @@ CreateConVar("fungus_max_breeding_delay", "8", FCVAR_REPLICATED + FCVAR_NOTIFY +
 CreateConVar("fungus_min_lifespan", "25", FCVAR_REPLICATED + FCVAR_NOTIFY + FCVAR_ARCHIVE, "Minimum amount of time (in seconds) that fungi can live.")
 CreateConVar("fungus_max_lifespan", "35", FCVAR_REPLICATED + FCVAR_NOTIFY + FCVAR_ARCHIVE, "Maximum amount of time (in seconds) that fungi can live.")
 CreateConVar("fungus_think_rate", "0.5", FCVAR_REPLICATED + FCVAR_NOTIFY + FCVAR_ARCHIVE, "Time (in seconds) between each fungus performing an action. Increase this to lower the strain on your server - however, it will decrease the survivability of fungi.")
+CreateConVar("fungus_min_distance", "50", FCVAR_REPLICATED + FCVAR_NOTIFY + FCVAR_ARCHIVE, "Minimum distance in game units for fungi to breed to. Recommended that you don't change this.")
+CreateConVar("fungus_max_distance", "400", FCVAR_REPLICATED + FCVAR_NOTIFY + FCVAR_ARCHIVE, "Maximum distance in game units for fungi to breed to. Recommended that you don't change this.")
 
 fungus_currentpop = 0
 

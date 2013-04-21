@@ -16,15 +16,16 @@ function ENT:Initialize()
 	self.radius = 100
 	self.damage = 30
 	self.has_exploded = false
-	self.death_time = (CurTime() + math.random(fungus_minimum_death_time, fungus_maximum_death_time))
-	self.next_spawn_time =  (CurTime() + math.random(fungus_minimum_spawn_time, fungus_maximum_spawn_time))
+	self.death_time = (CurTime() + math.random(GetConVar("fungus_min_lifespan"):GetFloat(), GetConVar("fungus_max_lifespan"):GetFloat()))
+	self.next_spawn_time =  (CurTime() + math.random(GetConVar("fungus_min_breeding_delay"):GetFloat(), GetConVar("fungus_max_breeding_delay"):GetFloat()))
 	
 	-- Physical Stuff
 	self.Entity:SetModel(self.model)
 	self.Entity:PhysicsInitSphere(3,"super_bouncy")
 	self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
 	self.Entity:SetSolid(SOLID_VPHYSICS)
-	self.Entity:SetColor( Color(0,0,0,55) )
+	self.Entity:SetRenderMode(RENDERMODE_TRANSALPHA)
+	self.Entity:SetColor( Color(255,127,0,255) )
 	
 
 	
@@ -72,7 +73,7 @@ end
 function ENT:Think()
 
 	-- When do we think next?
-	self.Entity:NextThink(CurTime() + 2.5 + math.random(2,8))
+	self.Entity:NextThink(CurTime() + GetConVar("fungus_think_rate"):GetFloat())
 	
 	
 
@@ -160,12 +161,12 @@ function ENT:FungusBreed()
 	if(breed_success == true) then
 		
 		-- Pick the next spawn time.
-		self.next_spawn_time = (CurTime() + math.random(fungus_minimum_spawn_time, fungus_maximum_spawn_time))
+		self.next_spawn_time =  (CurTime() + math.random(GetConVar("fungus_min_breeding_delay"):GetFloat(), GetConVar("fungus_max_breeding_delay"):GetFloat()))
 	
 	else
 	
 		-- Try again!
-		self.Entity:NextThink(CurTime() + 0.5)
+		self.Entity:NextThink(CurTime() + GetConVar("fungus_think_rate"):GetFloat())
 	end
 	
 	

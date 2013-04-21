@@ -22,7 +22,8 @@ function ENT:FungusBreed()
 	trace = {}
 	trace.start = trace_pos
 	-- Make the traces short
-	trace.endpos = Vector((trace_pos.x + math.random(-400,400)), (trace_pos.y + math.random(-400,400)), (trace_pos.z + math.random(-400,400)))
+	trace.endpos = Vector((trace_pos.x + math.random(-GetConVar("fungus_max_distance"):GetFloat(),GetConVar("fungus_max_distance"):GetFloat())), (trace_pos.y + math.random(-GetConVar("fungus_max_distance"):GetFloat(),GetConVar("fungus_max_distance"):GetFloat())), (trace_pos.z + math.random(-GetConVar("fungus_max_distance"):GetFloat(),GetConVar("fungus_max_distance"):GetFloat())))
+	
 	
 	
 
@@ -44,7 +45,7 @@ function ENT:FungusBreed()
 		end
 		
 		-- If the trace hit close by...
-		if(self.Entity:GetPos():Distance(tr.HitPos) > 5) and (self.Entity:GetPos():Distance(tr.HitPos) < 400) then
+		if(self.Entity:GetPos():Distance(tr.HitPos) > GetConVar("fungus_min_distance"):GetFloat() / 10) and (self.Entity:GetPos():Distance(tr.HitPos) < GetConVar("fungus_max_distance"):GetFloat() / 2) then
 			
 			-- Make a baby!
 			
@@ -91,20 +92,18 @@ function ENT:FungusBreed()
 	if(breed_success == true) then
 		-- Vent Fungus is incredibly proliferent within tight spaces. Otherwise, it grows slower than usual.
 		
-		if(self.Entity:GetPos():Distance(tr.HitPos) < 50) then
-			self.next_spawn_time = (CurTime() + math.random(0.5,1.5))
-			self.Entity:NextThink(CurTime() + 0.4)
-			-- Offspring must be fast, so we call its fungusbreed function right away.
-			math.randomseed(CurTime())
-			ent:FungusBreed()
+		if(self.Entity:GetPos():Distance(tr.HitPos) <= GetConVar("fungus_min_distance"):GetFloat()) then
+			self.next_spawn_time = (CurTime() + GetConVar("fungus_min_breeding_delay"):GetFloat() / 4)
+			self.Entity:NextThink(CurTime() + GetConVar("fungus_think_rate"):GetFloat())
+			
 		else
-			self.next_spawn_time = (CurTime() + math.random((fungus_minimum_spawn_time * 1.3), (fungus_maximum_spawn_time * 1.3)))
+			self.next_spawn_time = (CurTime() + GetConVar("fungus_max_breeding_delay"):GetFloat()*2)
 		end
 	
 	else
 	
 		-- Try again!
-		self.Entity:NextThink(CurTime() + 0.5)
+		self.Entity:NextThink(CurTime() + GetConVar("fungus_think_rate"):GetFloat())
 	end
 	
 	
