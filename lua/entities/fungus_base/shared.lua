@@ -8,3 +8,4 @@ ENT.Instructions = "Install the mod properly, you should not be seeing this."
 
 ENT.Spawnable = false
 ENT.AdminSpawnable = false
+

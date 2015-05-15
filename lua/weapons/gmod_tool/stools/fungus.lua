@@ -22,11 +22,11 @@ if ( CLIENT ) then
 	
 	language.Add( "Fungus_type", "Fungus Type")
 	
-	language.Add( "Tool_fungus_name", "Blastfungus Tool" )
-	language.Add( "Tool_fungus_desc", "Start a Blastfungus colony." )
-	language.Add( "Tool_fungus_0", "Left click to start a colony." )
+	language.Add( "Tool.fungus.name", "Blastfungus Tool" )
+	language.Add( "Tool.fungus.desc", "Start a Blastfungus colony." )
+	language.Add( "Tool.fungus.0", "Left click to start a colony." )
 	
-	language.Add( "Undone_fungus", "Undone Blastfungus" )
+	language.Add( "Undone_Blastfungus", "Undone Blastfungus Spore" )
 end
 
 function TOOL:Reload()

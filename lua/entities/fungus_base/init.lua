@@ -20,8 +20,8 @@ function ENT:Initialize()
 	self:PhysicsInitSphere(3)
 	self:SetMoveType(MOVETYPE_VPHYSICS)
 	self:SetSolid(SOLID_VPHYSICS)
-	self:SetRenderMode(RENDERMODE_TRANSCOLOR)
-	self.RenderGroup = RENDERGROUP_BOTH
+	self:SetRenderMode(RENDERMODE_TRANSALPHA)
+	self.RenderGroup = RENDERGROUP_TRANSLUCENT
 	self:SetColor( Color(0,0,0,55) )
 	
 	-- Update global population value

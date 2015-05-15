@@ -24,7 +24,7 @@ function ENT:Initialize()
 	self:PhysicsInitSphere(3,"super_bouncy")
 	self:SetMoveType(MOVETYPE_VPHYSICS)
 	self:SetSolid(SOLID_VPHYSICS)
-	self:SetRenderMode(RENDERMODE_TRANSCOLOR)
+	self:SetRenderMode(RENDERMODE_TRANSALPHA)
 	self.RenderGroup = RENDERGROUP_TRANSLUCENT
 	self:SetColor( Color(255,127,0,255) )
 	
@@ -132,7 +132,7 @@ function ENT:FungusBreed()
 		ent:SetAngles(spawn_angle)
 		ent:Spawn()
 		ent:Activate()
-		ent:SetColor(Color(0,0,0,55))
+		ent:SetColor( Color(255,127,0,255) )
 		
 					
 			
