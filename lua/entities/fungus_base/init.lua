@@ -22,7 +22,7 @@ function ENT:Initialize()
 	self:SetSolid(SOLID_VPHYSICS)
 	self:SetRenderMode(RENDERMODE_TRANSALPHA)
 	self.RenderGroup = RENDERGROUP_TRANSLUCENT
-	self:SetColor( Color(0,0,0,55) )
+	self:SetColor( Color(0,0,0,230) )
 	
 	-- Update global population value
 	fungus_currentpop = fungus_currentpop + 1
@@ -39,7 +39,7 @@ function ENT:OnTakeDamage(dmg)
 	-- What hit us?
 	attacker = dmg:GetAttacker():GetClass()
 	
-	if(string.find(attacker,"fungus_") == nil) then
+	if(string.find(attacker,"fungus_") == nil and IsValid(activator)) then
 		-- If it wasn't a fungus that bumped us...
 		self.Entity:FungusAction()
 		-- ... perform this fungus' action!
@@ -52,7 +52,7 @@ function ENT:Touch(activator)
 	-- What's touching me?
 	toucher = activator:GetClass()
 	
-	if(string.find(toucher,"fungus_") == nil) then
+	if(string.find(toucher,"fungus_") == nil and IsValid(activator)) then
 		-- If it wasn't a fungus that bumped us...
 		self.Entity:FungusAction()
 		-- ... perform this fungus' action!	
@@ -188,7 +188,7 @@ function ENT:FungusBreed()
 			ent:SetAngles(spawn_angle)
 			ent:Spawn()
 			ent:Activate()
-			ent:SetColor(Color(0,0,0,55))
+			ent:SetColor(Color(0,0,0,230))
 			ent:SetOwner(tr.Entity)
 			
 			-- Make a noise!
