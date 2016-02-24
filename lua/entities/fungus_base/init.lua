@@ -39,7 +39,7 @@ function ENT:OnTakeDamage(dmg)
 	-- What hit us?
 	attacker = dmg:GetAttacker():GetClass()
 	
-	if(string.find(attacker,"fungus_") == nil and IsValid(activator)) then
+	if(string.find(attacker,"fungus_") == nil) then
 		-- If it wasn't a fungus that bumped us...
 		self.Entity:FungusAction()
 		-- ... perform this fungus' action!
