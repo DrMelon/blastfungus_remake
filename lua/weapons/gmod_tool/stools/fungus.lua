@@ -19,6 +19,7 @@ if ( CLIENT ) then
 	language.Add( "fungus_bouncy", "Bouncy Fungus")
 	language.Add( "fungus_vent", "Vent Fungus")
 	language.Add( "fungus_infect", "Infectious Fungus")
+	language.Add( "fungus_evolving", "Evolving Fungus")
 	
 	language.Add( "Fungus_type", "Fungus Type")
 	
@@ -113,6 +114,8 @@ function TOOL:LeftClick( trace )
 		fungus = ents.Create("fungus_vent")
 	elseif(fungtype == "6") then
 		fungus = ents.Create("fungus_infect")
+	elseif(fungtype == "7") then
+		fungus = ents.Create("fungus_infect")		
 	else
 		fungus = ents.Create("fungus_base")
 	end
@@ -180,7 +183,8 @@ function TOOL.BuildCPanel( CPanel )
 							["#fungus_float"]	= { fungus_type = "3" },
 							["#fungus_bouncy"]	= { fungus_type = "4" },
 							["#fungus_vent"]	= { fungus_type = "5" },
-							["#fungus_infect"]  = { fungus_type = "6" }
+							["#fungus_infect"]  = { fungus_type = "6" },
+							["#fungus_evolving"]  = { fungus_type = "7" }
 						},
 						CVars = { "fungus_type" },
 	})	

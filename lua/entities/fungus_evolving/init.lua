@@ -14,6 +14,11 @@ function ENT:Initialize()
 	self.has_exploded = false
 	self.death_time = (CurTime() + math.random(GetConVar("fungus_min_lifespan"):GetFloat(), GetConVar("fungus_max_lifespan"):GetFloat()))
 	self.next_spawn_time =  (CurTime() + math.random(GetConVar("fungus_min_breeding_delay"):GetFloat(), GetConVar("fungus_max_breeding_delay"):GetFloat()))
+	self.rcol = 0
+	self.gcol = 0
+	self.bcol = 0
+	self.acol = 230
+	self.dna_string = self:CreateDNAString()
 	
 	-- Physical Stuff
 	self:SetModel(self.model)
@@ -22,7 +27,7 @@ function ENT:Initialize()
 	self:SetSolid(SOLID_VPHYSICS)
 	self:SetRenderMode(RENDERMODE_TRANSALPHA)
 	self.RenderGroup = RENDERGROUP_TRANSLUCENT
-	self:SetColor( Color(0,0,0,230) )
+	self:SetColor( Color(self.rcol,self.gcol,self.bcol,self.acol) )
 	
 	-- Update global population value
 	fungus_currentpop = fungus_currentpop + 1
@@ -122,19 +127,19 @@ end
 
 function ENT:FungusDeath()
 	-- Create a puff of smoke
-	puff = ents.Create("env_smoketrail")
-	puff:SetKeyValue("startsize","10")
-	puff:SetKeyValue("endsize","20")
-	puff:SetKeyValue("minspeed","1")
-	puff:SetKeyValue("maxspeed","2")
-	puff:SetKeyValue("startcolor","40 40 40")
-	puff:SetKeyValue("endcolor","0 40 0")
-	puff:SetKeyValue("opacity",".8")
-	puff:SetKeyValue("spawnrate","5")
-	puff:SetKeyValue("lifetime","1")
-	puff:SetPos(self.Entity:GetPos())
-	puff:Spawn()
-	puff:Fire("kill","",0.7)
+	--puff = ents.Create("env_smoketrail")
+	--puff:SetKeyValue("startsize","10")
+	--puff:SetKeyValue("endsize","20")
+	--puff:SetKeyValue("minspeed","1")
+	--puff:SetKeyValue("maxspeed","2")
+	--puff:SetKeyValue("startcolor","40 40 40")
+	--puff:SetKeyValue("endcolor","0 40 0")
+	--puff:SetKeyValue("opacity",".8")
+	--puff:SetKeyValue("spawnrate","5")
+	--puff:SetKeyValue("lifetime","1")
+	--puff:SetPos(self.Entity:GetPos())
+	--puff:Spawn()
+	--puff:Fire("kill","",0.7)
 	
 	self.Entity:Remove()
 	
@@ -188,8 +193,9 @@ function ENT:FungusBreed()
 			ent:SetAngles(spawn_angle)
 			ent:Spawn()
 			ent:Activate()
-			ent:SetColor(Color(0,0,0,230))
 			ent:SetOwner(tr.Entity)
+			ent:CreateFromDNAString(self:MutateDNAString(self.dna_string))
+			ent:SetColor(Color(ent.rcol,ent.gcol,ent.bcol,230))
 			
 			-- Make a noise!
 			
@@ -231,5 +237,44 @@ function ENT:FungusBreed()
 	
 	
 	
+end
+
+function ENT:CreateDNAString()
+	-- Fungus Genome:
+	--
+	-- 000 000 000
+	-- 255 255 255
+	--  r  g  b
+	
+	local dna_string = {}
+	dna_string[0] = self.rcol / 100
+	dna_string[1] = self.rcol / 10
+	dna_string[2] = self.rcol / 1
+	
+	dna_string[3] = self.gcol / 100
+	dna_string[4] = self.gcol / 10
+	dna_string[5] = self.gcol / 1
+	
+	dna_string[6] = self.bcol / 100
+	dna_string[7] = self.bcol / 10
+	dna_string[8] = self.bcol / 1
+
+	
+	return dna_string
+end
+
+function ENT:MutateDNAString(dna_string)
+
+	dna_string[0] = math.random() * 2
+
+	return dna_string
+end
+
+function ENT:CreateFromDNAString(dna_string)
+
+	self.rcol = (dna_string[0] * 100) + (dna_string[1] * 10) + (dna_string[2] * 1)
+	self.gcol = (dna_string[3] * 100) + (dna_string[4] * 10) + (dna_string[5] * 1)
+	self.bcol = (dna_string[6] * 100) + (dna_string[7] * 10) + (dna_string[8] * 1)
+
 end
 
