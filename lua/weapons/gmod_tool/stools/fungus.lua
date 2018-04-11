@@ -52,6 +52,8 @@ function TOOL:Reload()
 				removetype = "fungus_vent"
 			elseif(fungtype == "6") then
 				removetype = "fungus_infect"
+			elseif(fungtype == "7") then
+				removetype = "fungus_evolving"
 			else
 				removetype = "fungus_base"
 			end
@@ -115,7 +117,7 @@ function TOOL:LeftClick( trace )
 	elseif(fungtype == "6") then
 		fungus = ents.Create("fungus_infect")
 	elseif(fungtype == "7") then
-		fungus = ents.Create("fungus_infect")		
+		fungus = ents.Create("fungus_evolving")		
 	else
 		fungus = ents.Create("fungus_base")
 	end

@@ -75,10 +75,8 @@ function ENT:FungusAction(trigger)
 	end
 end
 	
-function ENT:Think()
+function ENT:OnFungusThink()
 	-- Infection Fungi do not Die or Breed naturally.
-	self.Entity:NextThink(CurTime() + GetConVar("fungus_think_rate"):GetFloat())
-	
 	return true
 	
 end		

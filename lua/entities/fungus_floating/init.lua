@@ -3,12 +3,9 @@ AddCSLuaFile('cl_init.lua')
 
 include('shared.lua')
 
-
-
-
-
 function ENT:Initialize()
 	-- Random Seed
+	table.insert(fungus_list, self)
 	math.randomseed(CurTime())
 	
 	-- Variables
@@ -45,10 +42,7 @@ function ENT:Initialize()
 	
 end
 
-function ENT:Think()
-
-	-- When do we think next?
-	self.Entity:NextThink(CurTime() + GetConVar("fungus_think_rate"):GetFloat())
+function ENT:OnFungusThink()
 	
 	-- Floating Fungus moves and changes direction in the air.
 	if (CurTime() >= self.move_time) then
@@ -143,9 +137,7 @@ function ENT:FungusBreed()
 		self.next_spawn_time =  (CurTime() + math.random(GetConVar("fungus_min_breeding_delay"):GetFloat(), GetConVar("fungus_max_breeding_delay"):GetFloat()))
 	
 	else
-	
-		-- Try again!
-		self.Entity:NextThink(CurTime() + GetConVar("fungus_think_rate"):GetFloat())
+
 	end
 	
 	

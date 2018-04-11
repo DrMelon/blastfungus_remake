@@ -14,3 +14,35 @@ fungus_currentpop = 0
 fungus_float_minpower = -100
 fungus_float_maxpower = 100
 
+fungus_think_next = CurTime()
+fungus_list = {}
+
+if(SERVER) then
+	local function OnFungusThink()
+		if(CurTime() >= fungus_think_next) then
+			-- When do we think next?
+			fungus_think_next = CurTime() + GetConVar("fungus_think_rate"):GetFloat()
+			
+			
+			-- Clean out any nil values and re-create master table
+			clean_list = {}
+			for k, v in pairs(fungus_list) do
+				if(v != nil && IsValid(v)) then
+					table.insert(clean_list, v)
+				end
+			end
+			fungus_list = clean_list
+			
+			-- Do think for all fungi!
+			for k, v in pairs(fungus_list) do
+				if(IsValid(v)) then 
+					v:OnFungusThink()
+				end
+			end					
+		end
+		
+
+	end
+
+	hook.Add("Think", "OnFungusThink", OnFungusThink)
+end

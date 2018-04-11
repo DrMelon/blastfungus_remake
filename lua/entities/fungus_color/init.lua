@@ -107,13 +107,11 @@ function ENT:FungusBreed()
 			
 			ent:EmitSound("weapons/bugbait/bugbait_squeeze" .. sound .. ".wav",100,100)
 			
-			-- Weld to the thing we hit.
-			
-			local weld = constraint.Weld(ent, tr.Entity, 0, tr.PhysicsBone, 0)
-			
 			-- If we hit a place on the map...
 			if(tr.Entity:IsWorld()) then
 				ent:GetPhysicsObject():EnableMotion(false)
+			else
+				local weld = constraint.Weld(ent, tr.Entity, 0, tr.PhysicsBone, 0)
 			end
 			
 			-- Successfully made a baby!
@@ -133,9 +131,7 @@ function ENT:FungusBreed()
 		self.next_spawn_time = (CurTime() + math.random(GetConVar("fungus_min_breeding_delay"):GetFloat(), GetConVar("fungus_max_breeding_delay"):GetFloat()))
 	
 	else
-	
-		-- Try again!
-		self.Entity:NextThink(CurTime() + GetConVar("fungus_think_rate"):GetFloat())
+
 	end
 	
 	
