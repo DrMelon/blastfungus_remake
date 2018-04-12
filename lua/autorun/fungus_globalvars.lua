@@ -19,6 +19,8 @@ fungus_list = {}
 
 if(SERVER) then
 	local function OnFungusThink()
+		-- Random Seed
+		math.randomseed(CurTime())
 		if(CurTime() >= fungus_think_next) then
 			-- When do we think next?
 			fungus_think_next = CurTime() + GetConVar("fungus_think_rate"):GetFloat()

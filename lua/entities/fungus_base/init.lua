@@ -5,8 +5,6 @@ include('shared.lua')
 
 function ENT:Initialize()
 	table.insert(fungus_list, self)
-	-- Random Seed
-	math.randomseed(CurTime())
 	
 	-- Variables
 	self.model = "models/weapons/w_bugbait.mdl"
