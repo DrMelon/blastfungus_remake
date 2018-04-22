@@ -10,16 +10,21 @@ function ENT:Initialize()
 	
 	-- Variables
 	self.model = "models/weapons/w_bugbait.mdl"
+	
 	self.radius = 100
 	self.damage = 30
 	self.has_exploded = false
-	self.death_time = (CurTime() + math.random(GetConVar("fungus_min_lifespan"):GetFloat(), GetConVar("fungus_max_lifespan"):GetFloat()))
-	self.next_spawn_time =  (CurTime() + math.random(GetConVar("fungus_min_breeding_delay"):GetFloat(), GetConVar("fungus_max_breeding_delay"):GetFloat()))
-	self.rcol = 0
-	self.gcol = 0
-	self.bcol = 0
-	self.acol = 230
+	self.death_time = (CurTime() + math.Rand(GetConVar("fungus_min_lifespan"):GetFloat(), GetConVar("fungus_max_lifespan"):GetFloat()))
+	self.next_spawn_time =  (CurTime() + math.Rand(GetConVar("fungus_min_breeding_delay"):GetFloat(), GetConVar("fungus_max_breeding_delay"):GetFloat()))
+	self.rcol = math.Rand(0.0, 255.0)
+	self.gcol = math.Rand(0.0, 255.0)
+	self.bcol = math.Rand(0.0, 255.0)
+	self.acol = 255.0
 	self.dna_string = self:CreateDNAString()
+	self.species_marker = GetConVar("fungus_species_marker"):GetString()
+	self.root_species = GetConVar("fungus_species_marker"):GetString()
+	self.childnum = 0
+	self.parent_pos = self:GetPos()
 	
 	-- Physical Stuff
 	self:SetModel(self.model)
@@ -29,6 +34,7 @@ function ENT:Initialize()
 	self:SetRenderMode(RENDERMODE_TRANSALPHA)
 	self.RenderGroup = RENDERGROUP_TRANSLUCENT
 	self:SetColor( Color(self.rcol,self.gcol,self.bcol,self.acol) )
+	self:SetMaterial("models/debug/debugwhite", true)
 	
 	-- Update global population value
 	fungus_currentpop = fungus_currentpop + 1
@@ -37,6 +43,7 @@ function ENT:Initialize()
 	util.PrecacheSound("weapons/bugbait/bugbait_squeeze1.wav")
 	util.PrecacheSound("weapons/bugbait/bugbait_squeeze2.wav") 
 	util.PrecacheSound("weapons/bugbait/bugbait_squeeze3.wav") 
+	util.PrecacheSound("vo/k_lab/kl_ahhhh.wav") 
 	
 end
 
@@ -67,7 +74,12 @@ function ENT:Touch(activator)
 end
 
 function ENT:OnFungusThink()
-
+	self:SetNWString("m", self.species_marker)
+	self:SetNWFloat("r", self.rcol)
+	self:SetNWFloat("g", self.gcol)
+	self:SetNWFloat("b", self.bcol)
+	self:SetNWVector("parentpos", self.parent_pos)
+	self:SetNWString("dna", self.root_species .. " -- " .. self:PrettyPrintDNAString(self.dna_string))
 	-- Is this past the current death time?
 	if (CurTime() >= self.death_time) then
 		-- Perform this breed's death function
@@ -159,7 +171,7 @@ function ENT:FungusBreed()
 	trace = {}
 	trace.start = trace_pos
 	-- Make the traces short
-	trace.endpos = Vector((trace_pos.x + math.random(-GetConVar("fungus_max_distance"):GetFloat(),GetConVar("fungus_max_distance"):GetFloat())), (trace_pos.y + math.random(-GetConVar("fungus_max_distance"):GetFloat(),GetConVar("fungus_max_distance"):GetFloat())), (trace_pos.z + math.random(-GetConVar("fungus_max_distance"):GetFloat(),GetConVar("fungus_max_distance"):GetFloat())))
+	trace.endpos = Vector((trace_pos.x + math.Rand(-GetConVar("fungus_max_distance"):GetFloat(),GetConVar("fungus_max_distance"):GetFloat())), (trace_pos.y + math.Rand(-GetConVar("fungus_max_distance"):GetFloat(),GetConVar("fungus_max_distance"):GetFloat())), (trace_pos.z + math.Rand(-GetConVar("fungus_max_distance"):GetFloat(),GetConVar("fungus_max_distance"):GetFloat())))
 	
 	-- Perform the trace
 	tr = util.TraceLine(trace)
@@ -192,8 +204,41 @@ function ENT:FungusBreed()
 			ent:Spawn()
 			ent:Activate()
 			ent:SetOwner(tr.Entity)
+			
+			ent.root_species = self.root_species
 			ent:CreateFromDNAString(self:MutateDNAString(self.dna_string))
-			ent:SetColor(Color(ent.rcol,ent.gcol,ent.bcol,230))
+			ent.species_marker = self.species_marker .. tostring(self.childnum)
+			
+			local bredWithOther = false
+			local other_dna = {}
+			local other_marker = ""
+			
+			local otherFung = FindNearestEntity("fungus_evolving", self:GetPos(), GetConVar("fungus_max_distance"):GetFloat(), self)
+			
+			if(otherFung != nil and math.Rand(0, 100) < fungus_evolve_mutation_chance) then
+				
+				bredWithOther = otherFung:IsValid()
+				
+				if(bredWithOther == true) then
+					if(otherFung.root_species == self.root_species) then
+						bredWithOther = false
+						print("SAME SPECIES")
+					end
+				end
+				
+			end
+		
+			if(bredWithOther == true) then
+				other_dna = otherFung.dna_string
+				other_marker = otherFung.species_marker
+				ent:CreateFromDNAString(self:MutateDNAString(self:BreedDNAString(other_dna)))
+				ent.species_marker = self.species_marker .. tostring(self.childnum) .. "(" .. string.sub(self.root_species, 1) .. "x" .. string.sub(otherFung.root_species, 1) .. ")"
+				print("BRED: " .. otherFung.root_species .. " x s." .. self.root_species)
+				ent:EmitSound("vo/k_lab/kl_ahhhh.wav", 100, 100)
+			end
+			
+			ent:SetColor(Color(ent.rcol,ent.gcol,ent.bcol,ent.acol))
+			ent.parent_pos = self:GetPos()
 			
 			-- Make a noise!
 			
@@ -211,6 +256,7 @@ function ENT:FungusBreed()
 			
 			-- Successfully made a baby!
 			breed_success = true
+			self.childnum = self.childnum + 1
 			
 		
 		end
@@ -218,12 +264,12 @@ function ENT:FungusBreed()
 		
 	end
 	
-	-- If we successfully breeded...
+	-- If we successfully bred...
 	
 	if(breed_success == true) then
 		
 		-- Pick the next spawn time.
-		self.next_spawn_time = (CurTime() + math.random(GetConVar("fungus_min_breeding_delay"):GetFloat(), GetConVar("fungus_max_breeding_delay"):GetFloat()))
+		self.next_spawn_time = (CurTime() + math.Rand(self.dna_string[3], self.dna_string[4]))
 	
 	else
 
@@ -233,42 +279,97 @@ function ENT:FungusBreed()
 	
 end
 
+function FindNearestEntity( className, pos, range, notme )
+	local nearestEnt;
+	
+	for i, entity in ipairs( ents.FindByClass( className ) ) do 
+		local distance = pos:Distance( entity:GetPos() )
+			if( distance <= range and entity != notme) then
+			
+				nearestEnt = entity;
+				range = distance;
+			
+		end
+	end
+	
+	return nearestEnt;
+    
+end
+
 function ENT:CreateDNAString()
 	-- Fungus Genome:
 	--
-	-- 000 000 000
-	-- 255 255 255
-	--  r  g  b
+	-- 000 000 000    0.0      0.0
+	-- 255 255 255 
+	--  r  g  b     breedmin breedmax
 	
 	local dna_string = {}
-	dna_string[0] = self.rcol / 100
-	dna_string[1] = self.rcol / 10
-	dna_string[2] = self.rcol / 1
+	dna_string[0] = 0.0
+	dna_string[1] = 0.0
+	dna_string[2] = 0.0
+	dna_string[3] = 0.0
+	dna_string[4] = 0.0
 	
-	dna_string[3] = self.gcol / 100
-	dna_string[4] = self.gcol / 10
-	dna_string[5] = self.gcol / 1
 	
-	dna_string[6] = self.bcol / 100
-	dna_string[7] = self.bcol / 10
-	dna_string[8] = self.bcol / 1
-
+	dna_string[0] = self.rcol
+	dna_string[1] = self.gcol
+	dna_string[2] = self.bcol
+		
+	-- minmax breed
+	dna_string[3] = GetConVar("fungus_min_breeding_delay"):GetFloat()
+	dna_string[4] = GetConVar("fungus_max_breeding_delay"):GetFloat()
 	
 	return dna_string
 end
 
 function ENT:MutateDNAString(dna_string)
+	local new_dna = {}
+	local sequence_string = self:PrettyPrintDNAString(dna_string)
+	local genes_mutated = 0
+	sequence_string = sequence_string .. " -> "
+	for i=0, #dna_string do
+		new_dna[i] = dna_string[i]
+		if((math.Rand(0, 100)) < fungus_evolve_mutation_chance) then
+			new_dna[i] = math.Rand(dna_string[i] - fungus_evolve_mutation_rate, dna_string[i] + fungus_evolve_mutation_rate)
+			genes_mutated = genes_mutated + 1
+			print("Mutating gene: " .. tostring(dna_string[i]) .. "->" .. tostring(new_dna[i]))
+			if(new_dna[i] < 0) then
+				new_dna[i] = 0
+			end
+		end
+	end
+	sequence_string = sequence_string .. self:PrettyPrintDNAString(new_dna)
+	print("Species Mutate: " .. self.species_marker .. ": " ..  sequence_string .. " -- Genes Affected: " .. tostring(genes_mutated))
+	return new_dna
+end
 
-	dna_string[0] = math.random() * 2
-
-	return dna_string
+function ENT:BreedDNAString(dna_string)
+	local new_dna = {}
+	for i=0, #dna_string do
+		if(math.Rand(0, 100) < 50) then
+			new_dna[i] = dna_string[i]
+		else
+			new_dna[i] = self.dna_string[i]
+		end
+	end
+	
+	return new_dna
 end
 
 function ENT:CreateFromDNAString(dna_string)
 
-	self.rcol = (dna_string[0] * 100) + (dna_string[1] * 10) + (dna_string[2] * 1)
-	self.gcol = (dna_string[3] * 100) + (dna_string[4] * 10) + (dna_string[5] * 1)
-	self.bcol = (dna_string[6] * 100) + (dna_string[7] * 10) + (dna_string[8] * 1)
+	self.dna_string = dna_string
+	self.rcol = (dna_string[0])
+	self.gcol = (dna_string[1])
+	self.bcol = (dna_string[2])
 
 end
 
+function ENT:PrettyPrintDNAString(dna_string)
+	local sequence_string = ""
+	for i=0, #dna_string do
+		sequence_string = sequence_string .. string.format("%.1f", dna_string[i]) .. ":"
+	end
+	
+	return sequence_string
+end

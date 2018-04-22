@@ -57,7 +57,7 @@ function ENT:FungusAction(trigger)
 						local phys = baby:GetPhysicsObject()
 						phys:EnableGravity(true)
 						-- Blarf! Throw those fungus out!
-						phys:ApplyForceCenter( Vector( math.random(0, 100), math.random(0, 100), math.random(0,100)))
+						phys:ApplyForceCenter( Vector( math.Rand(0, 100), math.Rand(0, 100), math.Rand(0,100)))
 					end
 					
 					-- Remove self

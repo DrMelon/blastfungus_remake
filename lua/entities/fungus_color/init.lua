@@ -25,7 +25,7 @@ function ENT:FungusBreed()
 	trace = {}
 	trace.start = trace_pos
 	-- Make the traces short
-	trace.endpos = Vector((trace_pos.x + math.random(-GetConVar("fungus_max_distance"):GetFloat(),GetConVar("fungus_max_distance"):GetFloat())), (trace_pos.y + math.random(-GetConVar("fungus_max_distance"):GetFloat(),GetConVar("fungus_max_distance"):GetFloat())), (trace_pos.z + math.random(-GetConVar("fungus_max_distance"):GetFloat(),GetConVar("fungus_max_distance"):GetFloat())))
+	trace.endpos = Vector((trace_pos.x + math.Rand(-GetConVar("fungus_max_distance"):GetFloat(),GetConVar("fungus_max_distance"):GetFloat())), (trace_pos.y + math.Rand(-GetConVar("fungus_max_distance"):GetFloat(),GetConVar("fungus_max_distance"):GetFloat())), (trace_pos.z + math.Rand(-GetConVar("fungus_max_distance"):GetFloat(),GetConVar("fungus_max_distance"):GetFloat())))
 	
 	-- Perform the trace
 	tr = util.TraceLine(trace)
@@ -60,10 +60,10 @@ function ENT:FungusBreed()
 			
 			-- Colour Fungus: This type of fungus likes to change colour.
 			
-			local random_r = math.random(-45,45)
-			local random_g = math.random(-45,45)
-			local random_b = math.random(-45,45)
-			local random_a = math.random(-45,45)
+			local random_r = math.Rand(-45,45)
+			local random_g = math.Rand(-45,45)
+			local random_b = math.Rand(-45,45)
+			local random_a = math.Rand(-45,45)
 			
 			local curcolor = self.Entity:GetColor()
 			
@@ -128,7 +128,7 @@ function ENT:FungusBreed()
 	if(breed_success == true) then
 		
 		-- Pick the next spawn time.
-		self.next_spawn_time = (CurTime() + math.random(GetConVar("fungus_min_breeding_delay"):GetFloat(), GetConVar("fungus_max_breeding_delay"):GetFloat()))
+		self.next_spawn_time = (CurTime() + math.Rand(GetConVar("fungus_min_breeding_delay"):GetFloat(), GetConVar("fungus_max_breeding_delay"):GetFloat()))
 	
 	else
 
