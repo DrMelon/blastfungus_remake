@@ -25,6 +25,7 @@ function ENT:Initialize()
 	self.root_species = GetConVar("fungus_species_marker"):GetString()
 	self.childnum = 0
 	self.parent_pos = self:GetPos()
+	self.already_sent_msgs = false
 	
 	-- Physical Stuff
 	self:SetModel(self.model)
@@ -36,6 +37,7 @@ function ENT:Initialize()
 	self:SetColor( Color(self.rcol,self.gcol,self.bcol,self.acol) )
 	self:SetMaterial("!fungus_material", true)
 	self:SetNWVector("parentpos", self:GetPos())
+	
 	
 	-- Update global population value
 	fungus_currentpop = fungus_currentpop + 1
@@ -75,12 +77,15 @@ function ENT:Touch(activator)
 end
 
 function ENT:OnFungusThink()
-	self:SetNWString("m", self.species_marker)
-	self:SetNWFloat("r", self.rcol)
-	self:SetNWFloat("g", self.gcol)
-	self:SetNWFloat("b", self.bcol)
-	self:SetNWVector("parentpos", self.parent_pos)
-	self:SetNWString("dna", self.root_species .. " -- " .. self:PrettyPrintDNAString(self.dna_string))
+	if(self.already_sent_msgs == false) then
+		self:SetNWString("m", self.species_marker)
+		self:SetNWFloat("r", self.rcol)
+		self:SetNWFloat("g", self.gcol)
+		self:SetNWFloat("b", self.bcol)
+		self:SetNWVector("parentpos", self.parent_pos)
+		self:SetNWString("dna", self.root_species .. " -- " .. self:PrettyPrintDNAString(self.dna_string))
+		self.already_sent_msgs = true
+	end
 	-- Is this past the current death time?
 	if (CurTime() >= self.death_time) then
 		-- Perform this breed's death function
