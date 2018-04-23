@@ -9,16 +9,22 @@ CreateConVar("fungus_think_rate", "0.5", FCVAR_REPLICATED + FCVAR_NOTIFY + FCVAR
 CreateConVar("fungus_min_distance", "50", FCVAR_REPLICATED + FCVAR_NOTIFY + FCVAR_ARCHIVE, "Minimum distance in game units for fungi to breed to. Recommended that you don't change this.")
 CreateConVar("fungus_max_distance", "400", FCVAR_REPLICATED + FCVAR_NOTIFY + FCVAR_ARCHIVE, "Maximum distance in game units for fungi to breed to. Recommended that you don't change this.")
 CreateConVar("fungus_species_marker", "f_", FCVAR_REPLICATED + FCVAR_NOTIFY + FCVAR_ARCHIVE, "Evolving fungus species marker. Change this to track different breeds.")
+CreateConVar("fungus_evolve_debug_draw", "0", FCVAR_REPLICATED + FCVAR_NOTIFY + FCVAR_ARCHIVE, "Evolving fungus drawing DNA strings? 1 yes, 0 no")
 
 fungus_currentpop = 0
 
 fungus_float_minpower = -100
 fungus_float_maxpower = 100
-fungus_evolve_mutation_rate = 3.0
+fungus_evolve_mutation_rate = 0.10
 fungus_evolve_mutation_chance = 25.0
 
 fungus_think_next = CurTime()
 fungus_list = {}
+
+fungus_debug_material = CreateMaterial("fungus_material", "UnlitGeneric", {
+ ["$basetexture"] = "color/white",
+ ["$model"] = 1
+} )
 
 if(SERVER) then
 	local function OnFungusThink()

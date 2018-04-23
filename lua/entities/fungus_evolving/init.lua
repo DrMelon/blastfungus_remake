@@ -34,7 +34,8 @@ function ENT:Initialize()
 	self:SetRenderMode(RENDERMODE_TRANSALPHA)
 	self.RenderGroup = RENDERGROUP_TRANSLUCENT
 	self:SetColor( Color(self.rcol,self.gcol,self.bcol,self.acol) )
-	self:SetMaterial("models/debug/debugwhite", true)
+	self:SetMaterial("!fungus_material", true)
+	self:SetNWVector("parentpos", self:GetPos())
 	
 	-- Update global population value
 	fungus_currentpop = fungus_currentpop + 1
@@ -189,7 +190,7 @@ function ENT:FungusBreed()
 		end
 		
 		-- If the trace hit close by...
-		if(self.Entity:GetPos():Distance(tr.HitPos) > GetConVar("fungus_min_distance"):GetFloat()) and (self.Entity:GetPos():Distance(tr.HitPos) < GetConVar("fungus_max_distance"):GetFloat()) then
+		if((self.Entity:GetPos():Distance(tr.HitPos) > self.dna_string[5][0]) and (self.Entity:GetPos():Distance(tr.HitPos) < self.dna_string[6][0]))then
 			
 			-- Make a baby!
 			
@@ -213,7 +214,7 @@ function ENT:FungusBreed()
 			local other_dna = {}
 			local other_marker = ""
 			
-			local otherFung = FindNearestEntity("fungus_evolving", self:GetPos(), GetConVar("fungus_max_distance"):GetFloat(), self)
+			local otherFung = FindNearestEntity("fungus_evolving", self:GetPos(), self.dna_string[6][0], self)
 			
 			if(otherFung != nil and math.Rand(0, 100) < fungus_evolve_mutation_chance) then
 				
@@ -269,7 +270,7 @@ function ENT:FungusBreed()
 	if(breed_success == true) then
 		
 		-- Pick the next spawn time.
-		self.next_spawn_time = (CurTime() + math.Rand(self.dna_string[3], self.dna_string[4]))
+		self.next_spawn_time = (CurTime() + math.Rand(self.dna_string[3][0], self.dna_string[4][0]))
 	
 	else
 
@@ -297,6 +298,9 @@ function FindNearestEntity( className, pos, range, notme )
 end
 
 function ENT:CreateDNAString()
+	-- Gene structure: Current, Min, Max (max is recessive)
+	-- (possibly allow min/max to drift a tiny bit?)
+	--
 	-- Fungus Genome:
 	--
 	-- 000 000 000    0.0      0.0
@@ -304,21 +308,14 @@ function ENT:CreateDNAString()
 	--  r  g  b     breedmin breedmax
 	
 	local dna_string = {}
-	dna_string[0] = 0.0
-	dna_string[1] = 0.0
-	dna_string[2] = 0.0
-	dna_string[3] = 0.0
-	dna_string[4] = 0.0
-	
-	
-	dna_string[0] = self.rcol
-	dna_string[1] = self.gcol
-	dna_string[2] = self.bcol
+	dna_string[0] = {[0] = self.rcol, [1] = 0.0, [2] = 255.0}
+	dna_string[1] = {[0] = self.gcol, [1] = 0.0, [2] = 255.0}
+	dna_string[2] = {[0] = self.bcol, [1] = 0.0, [2] = 255.0}
+	dna_string[3] = {[0] = GetConVar("fungus_min_breeding_delay"):GetFloat(), [1] = GetConVar("fungus_min_breeding_delay"):GetFloat()/4,[2] =  GetConVar("fungus_max_breeding_delay"):GetFloat()*4}
+	dna_string[4] = {[0] = GetConVar("fungus_max_breeding_delay"):GetFloat(), [1] = GetConVar("fungus_min_breeding_delay"):GetFloat()/4,[2] =  GetConVar("fungus_max_breeding_delay"):GetFloat()*4}
+	dna_string[5] = {[0] = GetConVar("fungus_min_distance"):GetFloat(), [1] = GetConVar("fungus_min_distance"):GetFloat()/4, [2] = GetConVar("fungus_max_distance"):GetFloat()*4}
+	dna_string[6] = {[0] = GetConVar("fungus_max_distance"):GetFloat(), [1] = GetConVar("fungus_min_distance"):GetFloat()/4, [2] =  GetConVar("fungus_max_distance"):GetFloat()*4}
 		
-	-- minmax breed
-	dna_string[3] = GetConVar("fungus_min_breeding_delay"):GetFloat()
-	dna_string[4] = GetConVar("fungus_max_breeding_delay"):GetFloat()
-	
 	return dna_string
 end
 
@@ -328,13 +325,26 @@ function ENT:MutateDNAString(dna_string)
 	local genes_mutated = 0
 	sequence_string = sequence_string .. " -> "
 	for i=0, #dna_string do
-		new_dna[i] = dna_string[i]
+		new_dna[i] = {[0] = 0.0, [1] = 0.0, [2] = 0.0}
+		new_dna[i][0] = dna_string[i][0]
+		new_dna[i][1] = dna_string[i][1]
+		new_dna[i][2] = dna_string[i][2]
 		if((math.Rand(0, 100)) < fungus_evolve_mutation_chance) then
-			new_dna[i] = math.Rand(dna_string[i] - fungus_evolve_mutation_rate, dna_string[i] + fungus_evolve_mutation_rate)
+		
+			if((math.Rand(0, 100) < fungus_evolve_mutation_chance / 4.0)) then
+				new_dna[i][1] = math.Rand(new_dna[i][1] - 1.0, new_dna[i][1] + 1.0)
+				new_dna[i][2] = math.Rand(new_dna[i][2] - 1.0, new_dna[i][2] + 1.0)
+			end
+		
+		
+			new_dna[i][0] = math.Rand(dna_string[i][0] - (dna_string[i][2]*fungus_evolve_mutation_rate), dna_string[i][0] + (dna_string[i][2]*fungus_evolve_mutation_rate))
 			genes_mutated = genes_mutated + 1
-			print("Mutating gene: " .. tostring(dna_string[i]) .. "->" .. tostring(new_dna[i]))
-			if(new_dna[i] < 0) then
-				new_dna[i] = 0
+			print("Mutating gene: " .. tostring(dna_string[i][0]) .. "->" .. tostring(new_dna[i][0]))
+			if(new_dna[i][0] < new_dna[i][1]) then
+				new_dna[i][0] = new_dna[i][1]
+			end
+			if(new_dna[i][0] > new_dna[i][2]) then
+				new_dna[i][0] = new_dna[i][2]
 			end
 		end
 	end
@@ -346,10 +356,15 @@ end
 function ENT:BreedDNAString(dna_string)
 	local new_dna = {}
 	for i=0, #dna_string do
+		new_dna[i] = {[0] = 0.0, [1] = 0.0, [2] = 0.0}
 		if(math.Rand(0, 100) < 50) then
-			new_dna[i] = dna_string[i]
+			new_dna[i][0] = dna_string[i][0]
+			new_dna[i][1] = dna_string[i][1]
+			new_dna[i][2] = self.dna_string[i][2]
 		else
-			new_dna[i] = self.dna_string[i]
+			new_dna[i][0] = self.dna_string[i][0]
+			new_dna[i][1] = self.dna_string[i][1]
+			new_dna[i][2] = dna_string[i][2]
 		end
 	end
 	
@@ -359,16 +374,16 @@ end
 function ENT:CreateFromDNAString(dna_string)
 
 	self.dna_string = dna_string
-	self.rcol = (dna_string[0])
-	self.gcol = (dna_string[1])
-	self.bcol = (dna_string[2])
+	self.rcol = (dna_string[0][0])
+	self.gcol = (dna_string[1][0])
+	self.bcol = (dna_string[2][0])
 
 end
 
 function ENT:PrettyPrintDNAString(dna_string)
 	local sequence_string = ""
 	for i=0, #dna_string do
-		sequence_string = sequence_string .. string.format("%.1f", dna_string[i]) .. ":"
+		sequence_string = sequence_string .. string.format("%.1f", dna_string[i][0]) .. ":" 
 	end
 	
 	return sequence_string
