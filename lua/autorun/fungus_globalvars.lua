@@ -5,11 +5,13 @@ CreateConVar("fungus_min_breeding_delay", "2", FCVAR_REPLICATED + FCVAR_NOTIFY +
 CreateConVar("fungus_max_breeding_delay", "8", FCVAR_REPLICATED + FCVAR_NOTIFY + FCVAR_ARCHIVE, "Maximum amount of time (in seconds) between fungi attempting to breed.")
 CreateConVar("fungus_min_lifespan", "25", FCVAR_REPLICATED + FCVAR_NOTIFY + FCVAR_ARCHIVE, "Minimum amount of time (in seconds) that fungi can live.")
 CreateConVar("fungus_max_lifespan", "35", FCVAR_REPLICATED + FCVAR_NOTIFY + FCVAR_ARCHIVE, "Maximum amount of time (in seconds) that fungi can live.")
-CreateConVar("fungus_think_rate", "0.5", FCVAR_REPLICATED + FCVAR_NOTIFY + FCVAR_ARCHIVE, "Time (in seconds) between each fungus performing an action. Increase this to lower the strain on your server - however, it will decrease the survivability of fungi.")
+CreateConVar("fungus_think_rate", "0.15", FCVAR_REPLICATED + FCVAR_NOTIFY + FCVAR_ARCHIVE, "Time (in seconds) between each fungus performing an action. Increase this to lower the strain on your server - however, it will decrease the survivability of fungi.")
 CreateConVar("fungus_min_distance", "50", FCVAR_REPLICATED + FCVAR_NOTIFY + FCVAR_ARCHIVE, "Minimum distance in game units for fungi to breed to. Recommended that you don't change this.")
 CreateConVar("fungus_max_distance", "400", FCVAR_REPLICATED + FCVAR_NOTIFY + FCVAR_ARCHIVE, "Maximum distance in game units for fungi to breed to. Recommended that you don't change this.")
 CreateConVar("fungus_balloon_min_size_increase", "5.0", FCVAR_REPLICATED + FCVAR_NOTIFY + FCVAR_ARCHIVE, "Minimum scale increase that balloon fungus can undergo.")
 CreateConVar("fungus_balloon_max_size_increase", "10.0", FCVAR_REPLICATED + FCVAR_NOTIFY + FCVAR_ARCHIVE, "Maximum scale increase that balloon fungus can undergo.")
+CreateConVar("fungus_min_lightning_zap_delay", "0.05", FCVAR_REPLICATED + FCVAR_NOTIFY + FCVAR_ARCHIVE, "Minimum time (in seconds) between lightning fungus zaps.")
+CreateConVar("fungus_max_lightning_zap_delay", "0.15", FCVAR_REPLICATED + FCVAR_NOTIFY + FCVAR_ARCHIVE, "Maximum time (in seconds) between lightning fungus zaps.")
 
 fungus_currentpop = 0
 
@@ -23,8 +25,6 @@ fungus_list = {}
 
 if(SERVER) then
 	local function OnFungusThink()
-		-- Random Seed
-		math.randomseed(CurTime())
 		if(CurTime() >= fungus_think_next) then
 			-- When do we think next?
 			fungus_think_next = CurTime() + GetConVar("fungus_think_rate"):GetFloat()

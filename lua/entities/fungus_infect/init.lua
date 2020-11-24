@@ -53,7 +53,7 @@ function ENT:FungusAction(trigger)
 						baby:SetPos(self:GetPos())
 						baby:Spawn()
 						baby:Activate()
-						baby:SetColor(Color(0,16,0,230))
+						baby:Initialize()
 						local phys = baby:GetPhysicsObject()
 						phys:EnableGravity(true)
 						-- Blarf! Throw those fungus out!

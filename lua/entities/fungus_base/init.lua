@@ -184,7 +184,7 @@ function ENT:FungusBreed()
 			ent:SetAngles(spawn_angle)
 			ent:Spawn()
 			ent:Activate()
-			ent:SetColor(Color(0,0,0,230))
+			ent:Initialize()
 			ent:SetOwner(tr.Entity)
 			
 			-- Make a noise!

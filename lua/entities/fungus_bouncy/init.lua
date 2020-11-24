@@ -127,7 +127,7 @@ function ENT:FungusBreed()
 		ent:SetAngles(spawn_angle)
 		ent:Spawn()
 		ent:Activate()
-		ent:SetColor( Color(255,127,0,255) )
+		ent:Initialize()
 		
 					
 			

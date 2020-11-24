@@ -20,6 +20,7 @@ if ( CLIENT ) then
 	language.Add( "fungus_vent", "Vent Fungus")
 	language.Add( "fungus_infect", "Infectious Fungus")
 	language.Add( "fungus_balloon", "Balloon Fungus")
+	language.Add( "fungus_lightning", "Lightning Fungus")
 	
 	language.Add( "Fungus_type", "Fungus Type")
 	
@@ -54,6 +55,8 @@ function TOOL:Reload()
 				removetype = "fungus_infect"
 			elseif(fungtype == "7") then
 				removetype = "fungus_balloon"
+			elseif(fungtype == "8") then
+				removetype = "fungus_lightning"
 			else
 				removetype = "fungus_base"
 			end
@@ -118,6 +121,8 @@ function TOOL:LeftClick( trace )
 		fungus = ents.Create("fungus_infect")
 	elseif(fungtype == "7") then
 		fungus = ents.Create("fungus_balloon")
+	elseif(fungtype == "8") then
+		fungus = ents.Create("fungus_lightning")		
 	else
 		fungus = ents.Create("fungus_base")
 	end
@@ -186,7 +191,8 @@ function TOOL.BuildCPanel( CPanel )
 							["#fungus_bouncy"]	= { fungus_type = "4" },
 							["#fungus_vent"]	= { fungus_type = "5" },
 							["#fungus_infect"]  = { fungus_type = "6" },
-							["#fungus_balloon"]  = { fungus_type = "7" }
+							["#fungus_balloon"]  = { fungus_type = "7" },
+							["#fungus_lightning"]  = { fungus_type = "8" }
 						},
 						CVars = { "fungus_type" },
 	})	

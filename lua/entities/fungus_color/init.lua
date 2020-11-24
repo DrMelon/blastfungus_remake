@@ -57,6 +57,7 @@ function ENT:FungusBreed()
 			ent:SetAngles(spawn_angle)
 			ent:Spawn()
 			ent:Activate()
+			ent:Initialize()
 			
 			-- Colour Fungus: This type of fungus likes to change colour.
 			

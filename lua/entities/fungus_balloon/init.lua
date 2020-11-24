@@ -78,7 +78,7 @@ function ENT:FungusBreed()
 		ent:SetPos(spawn_pos)
 		ent:Spawn()
 		ent:Activate()
-		ent:SetColor(Color(255,40,40,255))
+		ent:Initialize()
 		local ent_phys = ent:GetPhysicsObject()
 		local phys = self.Entity:GetPhysicsObject()
 		if (ent_phys:IsValid()) then
