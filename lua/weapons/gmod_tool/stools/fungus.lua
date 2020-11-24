@@ -19,7 +19,7 @@ if ( CLIENT ) then
 	language.Add( "fungus_bouncy", "Bouncy Fungus")
 	language.Add( "fungus_vent", "Vent Fungus")
 	language.Add( "fungus_infect", "Infectious Fungus")
-	language.Add( "fungus_evolving", "Evolving Fungus")
+	language.Add( "fungus_balloon", "Balloon Fungus")
 	
 	language.Add( "Fungus_type", "Fungus Type")
 	
@@ -53,7 +53,7 @@ function TOOL:Reload()
 			elseif(fungtype == "6") then
 				removetype = "fungus_infect"
 			elseif(fungtype == "7") then
-				removetype = "fungus_evolving"
+				removetype = "fungus_balloon"
 			else
 				removetype = "fungus_base"
 			end
@@ -117,7 +117,7 @@ function TOOL:LeftClick( trace )
 	elseif(fungtype == "6") then
 		fungus = ents.Create("fungus_infect")
 	elseif(fungtype == "7") then
-		fungus = ents.Create("fungus_evolving")		
+		fungus = ents.Create("fungus_balloon")
 	else
 		fungus = ents.Create("fungus_base")
 	end
@@ -139,8 +139,8 @@ function TOOL:LeftClick( trace )
 	local sound = tostring(soundrandom)
 	fungus:EmitSound("weapons/bugbait/bugbait_squeeze" .. sound .. ".wav",500,100)
 
-	-- Provided this is not a floating fungus, weld it.
-	if(fungtype != "3") then
+	-- Provided this is not a floating or balloon fungus, weld it.
+	if(fungtype != "3" and fungtype != "7") then
 		local weld = constraint.Weld(fungus,trace.Entity, 0, trace.PhysicsBone, 0)
 	end
 
@@ -186,7 +186,7 @@ function TOOL.BuildCPanel( CPanel )
 							["#fungus_bouncy"]	= { fungus_type = "4" },
 							["#fungus_vent"]	= { fungus_type = "5" },
 							["#fungus_infect"]  = { fungus_type = "6" },
-							["#fungus_evolving"]  = { fungus_type = "7" }
+							["#fungus_balloon"]  = { fungus_type = "7" }
 						},
 						CVars = { "fungus_type" },
 	})	
