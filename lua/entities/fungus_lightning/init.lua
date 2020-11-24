@@ -89,7 +89,19 @@ function ENT:FungusFindAndZapTarget()
 			-- play zap sound
 			local whichsound = math.random(1,9)
 			local sound = tostring(whichsound)
-			self.Entity:EmitSound("ambient/energy/zap" .. sound .. ".wav",100,100)			
+			self.Entity:EmitSound("ambient/energy/zap" .. sound .. ".wav",100,100)		
+			
+			-- physics pulse if target has physent
+			local target_phys = tr.Entity:GetPhysicsObject()
+			if (IsValid(target_phys)) then
+				local pulsedirection = tr.Entity:GetPos() - self.Entity:GetPos()
+				pulsedirection:Normalize()
+
+				pulselinvel, pulseangvel = target_phys:CalculateVelocityOffset(pulsedirection * 20 * target_phys:GetMass(), tr.HitPos)
+
+				target_phys:AddVelocity(pulselinvel)
+				target_phys:AddAngleVelocity(pulseangvel)
+			end
 			
 
 			-- Set a time out
